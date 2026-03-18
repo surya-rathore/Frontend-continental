@@ -1,0 +1,39 @@
+//  const API = import.meta.env.VITE_API_URL;
+
+const searchChid = async () => {
+  try {
+    const response = await fetch(`${API}/api/patient/search`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ chid }),
+    });
+
+    const data = await response.json();
+    console.log("response data:", data);
+
+    setFirstName(data.firstname);
+    setGenderAge(data.gender);
+    setEmergencyNo(data.emergencyNo);
+    setpatientImage(`${API}/images/${data.patientimage}.jpg`);
+    setImageName(`${data.patientimage}.jpg`);
+
+    const formatDOB = (dob) => {
+      const [day, month, year] = dob.split("/");
+
+      const months = [
+        "Jan","Feb","Mar","Apr","May","Jun",
+        "Jul","Aug","Sep","Oct","Nov","Dec"
+      ];
+
+      return `${day}-${months[parseInt(month) - 1]}-${year}`;
+    };
+
+    setDOB(formatDOB(data.DOB));
+    setLastName(data.lastName);
+
+  } catch (error) {
+    console.log(error);
+  }
+};
