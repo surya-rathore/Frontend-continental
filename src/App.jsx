@@ -11,51 +11,47 @@ function App() {
   const [patientImage, setpatientImage] = useState("");
   const [imageName, setImageName] = useState("");
 
-  const searchChid = async () => {
-    try {
-      const response = await fetch("http://localhost:5000/api/patient/search", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ chid }), // sending only chid
-      });
+const API = import.meta.env.VITE_API_URL;
 
-      const data = await response.json();
-      console.log("response data:", data);
-      // auto fill fields from backend response
-      setFirstName(data.firstname);
-      setGenderAge(data.gender);
-      setEmergencyNo(data.emergencyNo);
-      setpatientImage(`http://localhost:5000/images/${data.patientimage}.jpg`);
-      setImageName(`${data.patientimage}.jpg`);
-      const formatDOB = (dob) => {
-        const [day, month, year] = dob.split("/");
+const searchChid = async () => {
+  try {
+    const response = await fetch(`${API}/api/patient/search`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ chid }),
+    });
 
-        const months = [
-          "Jan",
-          "Feb",
-          "Mar",
-          "Apr",
-          "May",
-          "Jun",
-          "Jul",
-          "Aug",
-          "Sep",
-          "Oct",
-          "Nov",
-          "Dec",
-        ];
+    const data = await response.json();
+    console.log("response data:", data);
 
-        return `${day}-${months[parseInt(month) - 1]}-${year}`;
-      };
-      setDOB(formatDOB(data.DOB));
-      setLastName(data.lastName);
-      // setpatientImage(data.patientimage);
-    } catch (error) {
-      console.log(error);
-    }
-  };
+    setFirstName(data.firstname);
+    setGenderAge(data.gender);
+    setEmergencyNo(data.emergencyNo);
+
+    // 👇 yaha bhi localhost hata diya
+    setpatientImage(`${API}/images/${data.patientimage}.jpg`);
+    setImageName(`${data.patientimage}.jpg`);
+
+    const formatDOB = (dob) => {
+      const [day, month, year] = dob.split("/");
+
+      const months = [
+        "Jan","Feb","Mar","Apr","May","Jun",
+        "Jul","Aug","Sep","Oct","Nov","Dec"
+      ];
+
+      return `${day}-${months[parseInt(month) - 1]}-${year}`;
+    };
+
+    setDOB(formatDOB(data.DOB));
+    setLastName(data.lastName);
+
+  } catch (error) {
+    console.log(error);
+  }
+};
   console.log("image name:", patientImage);
   const clearForm = () => {
     setChid("");
